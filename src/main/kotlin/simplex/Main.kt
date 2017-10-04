@@ -8,15 +8,13 @@ fun main(args: Array<String>) {
     val nOfVariables = sc.nextInt()
     val nOfRows = sc.nextInt()
     val targetFunction = IntArray(nOfVariables)
+    val simplexMatrix = Array(nOfRows + 1) { DoubleArray(nOfVariables + 1) }
+    (0 until nOfRows).forEach { i ->
+        (0 until nOfVariables).forEach { j -> simplexMatrix[i][j] = sc.nextDouble() }
+        simplexMatrix[i][nOfVariables] = sc.nextDouble()
+    }
     for (i in 0 until nOfVariables) {
         targetFunction[i] = sc.nextInt()
-    }
-    val simplexMatrix = Array(nOfRows + 1) { DoubleArray(nOfVariables + 1) }
-    for (i in 0 until nOfRows) {
-        for (j in 0 until nOfVariables) {
-            simplexMatrix[i][j] = sc.nextDouble()
-        }
-        simplexMatrix[i][nOfVariables] = sc.nextDouble()
     }
     var q = 0.0
     if (sc.hasNext()) {
@@ -36,7 +34,8 @@ fun main(args: Array<String>) {
 }
 
 private fun recalcTable(simplexMatrix: Array<DoubleArray>, nOfRows: Int, nOfVariables: Int): Array<DoubleArray> {
-    val min = simplexMatrix[nOfRows].minBy { it < 0 }
+    val min = simplexMatrix[nOfRows].min()
+    if (min!! > 0.0) return simplexMatrix
     val column = simplexMatrix[nOfRows].indexOfFirst { it == simplexMatrix[nOfRows].find { it == min } }
     val coeffs = ArrayList<Double>()
     simplexMatrix[nOfVariables].forEachIndexed { index, i ->
@@ -46,10 +45,9 @@ private fun recalcTable(simplexMatrix: Array<DoubleArray>, nOfRows: Int, nOfVari
             coeffs.add(Double.MAX_VALUE)
         }
     }
-    val newMatrix = Array(nOfRows + 1) { DoubleArray(nOfVariables + 1) }
-
     val row = coeffs.indexOf(coeffs.min())
     val elem = simplexMatrix[row][column]
+    val newMatrix = Array(nOfRows + 1) { DoubleArray(nOfVariables + 1) }
     simplexMatrix[row][column] = 1 / elem
     (0..nOfVariables).forEachIndexed { index, _ ->
         if (index != column) {
