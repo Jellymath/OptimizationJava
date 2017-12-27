@@ -116,7 +116,7 @@ fun composeAntSolution(graph: List<Edge>): Pair<List<Int>, List<Edge>> {
 
 fun initGraph() = buildSequence {
     (start..end).forEach { from ->
-        (from..end).filter { from != it }.forEach { yield(Edge(from, it, random.nextInt(100) + 21)) }
+        (from..end).filter { from != it }.forEach { yield(Edge(from, it, random.nextInt(200) + 21)) }
     }
 }.toList()
 
